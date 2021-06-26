@@ -22,7 +22,7 @@ Scripts para desarrollar, operar y administrar bases de datos en SQL Server
   * Contiene sentencias que son utilizadas por un DBA en SQL Server.
 * **SQL-KonwLedge:**
   * Contiene Diapositivas sobre algún tema en especifico manejado por SQL Server, también se encuentra el editable, utilizando la herramienta draw.io.
-* * **SQL-Operation:**
+* **SQL-Operation:**
   * Contiene scripts que son utilizados por un DBA mediante una solicitud para tener un control y backup de estos.
 * **SQL-Topics**: 
   * Contiene temas generales y especificos de SQL Server.
