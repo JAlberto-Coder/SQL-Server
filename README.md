@@ -10,25 +10,23 @@ Scripts para desarrollar, operar y administrar bases de datos en SQL Server
 * Estos scripts se han ido generando a partir de mi experiencia, y de manera clara muchas referencias encontradas especialmente de Microsoft además de enseñanzas aprendidas.
 
 **Repositorio:**
-* **DCL:**
+* **DCL-Data-Control-Language:**
   * Contiene sentencias para el control de accesos, permisos, roles que tienen los usuarios de la base de datos.
-* **DDL:**
+* **DDL-Data-Definition-Language:**
   * Contiene queries para la definicion de objetos dentro de la instancia de SQL Server, comandos como CREATE, ALTER, DROP y TRUNCATE (En caso de aplicar)
-* **DML:**
+* **DML-Data-Manipulation-Language:**
   * Contiene queries para la manipulacion de datos, encontrares sentencias INSERT, UPDATE, DELETE, ETC.
-* **DQL:**
+* **DQL-DataQuery-Language:**
   * Contiene queries para la selección de datos con la sentencia SELECT.
-* **Funciones:**
-  * Contiene queries con la generación de funciones utiles en SQL Server.
-* **KonwLedge:**
+* **SQL-Admin:**
+  * Contiene sentencias que son utilizadas por un DBA en SQL Server.
+* **SQL-KonwLedge:**
   * Contiene Diapositivas sobre algún tema en especifico manejado por SQL Server, también se encuentra el editable, utilizando la herramienta draw.io.
-* **Procedures**: 
-  * Contiene procedimientos almacenados útiles para generar sentencias, o actualizar registros de una manera sencilla.
-* **Plantillas**: 
-  * Contiene plantillas que son comúnmente utilizadas, estas plantillas serán diferentes a las manejadas por Microsoft SQL Server Managemenet Studio.
-* **Scripts**: 
-  * Contiene ejemplos de scripts de todo tipo de DML o DDL, útiles para ver la forma en la que actúan ciertas sentencias.
-* **Scripts para Administración**: 
-  * Contiene ejemplos de scripts especialmente para mantener la administración de un servidor SQL Server.
+* * **SQL-Operation:**
+  * Contiene scripts que son utilizados por un DBA mediante una solicitud para tener un control y backup de estos.
+* **SQL-Topics**: 
+  * Contiene temas generales y especificos de SQL Server.
+* **TLC-Transaction-Control-Language**: 
+  * Contiene sentencias referentes al manejo de errores y transacciones.
 
 _A veces el mejor método para hacer algo es lanzarse. (Motoko Kusanagi)_
