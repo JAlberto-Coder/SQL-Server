@@ -110,6 +110,7 @@ SELECT @@ServerName AS server_name
 	, SJS.subsystem AS [type]
 	, SJS.command AS command
 	, SJS.database_name AS [database_name]
+	, SJS.last_run_date AS last_run_date
 	, SJS.last_run_duration AS last_run_duration
 FROM dbo.sysjobs SJ
 INNER JOIN dbo.sysjobsteps SJS ON SJ.job_id = SJS.job_id
