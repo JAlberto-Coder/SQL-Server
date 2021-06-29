@@ -35,6 +35,16 @@ SELECT @@SERVERNAME AS instance_name
 	, sl.hasaccess AS [has_access]
 	, CONVERT(VARCHAR(15), sl.createdate, 103) AS create_date
 	, CONVERT(VARCHAR(15), sl.updatedate, 103) AS update_date
+	, CASE sp.name 
+		WHEN 'NT AUTHORITY\SYSTEM' THEN 'Cuenta integrada para SQL Server, para validar logins de usuario.'
+		WHEN 'NT Service\MSSQLSERVER' THEN 'Cuenta integrada para SQL Server, para levantar servicios de SQL Server.'
+		WHEN 'NT SERVICE\SQLSERVERAGENT' THEN 'Cuenta integrada para SQL Server, para levantar especificamente el agente de SQL Server.'
+		WHEN 'NT SERVICE\SQLTELEMETRY' THEN 'Cuenta integrada para SQL Server, para el uso de eventos extendidos.'
+		WHEN 'NT SERVICE\SQLWriter' THEN 'Cuenta integrada para SQL Server, que ayuda a la generación de backups y restauraciones de BD.'
+		WHEN 'NT SERVICE\Winmgmt' THEN 'Cuenta integrada para SQL Server, que ayuda para el uso de WMI.'
+		WHEN 'sa' THEN 'Usuario integrado para SQL Server como Administrador del sistema.'
+		ELSE ''
+	  END AS [description]
 FROM sys.server_principals sp
 INNER JOIN sys.syslogins sl ON sp.sid = sl.sid
 WHERE sp.type <> 'R'
