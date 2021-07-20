@@ -58,8 +58,8 @@ DECLARE @vSentencia VARCHAR(4000);
 DECLARE @TblUsuariosXBD TABLE(DBName VARCHAR(200), UserName VARCHAR(250), LoginType VARCHAR(500), AssociatedRole VARCHAR(200));
 
 SELECT @vSentencia = 'SELECT ''?'' AS database_name,a.name AS Name,a.type_desc AS LoginType,USER_NAME(b.role_principal_id) AS AssociatedRole 
-FROM ?.sys.database_principals a
-LEFT OUTER JOIN ?.sys.database_role_members b ON a.principal_id=b.member_principal_id
+FROM [?].sys.database_principals a
+LEFT OUTER JOIN [?].sys.database_role_members b ON a.principal_id=b.member_principal_id
 WHERE a.sid NOT IN (0x01,0x00) 
 	AND a.sid IS NOT NULL 
 	AND a.type NOT IN (''C'') 
