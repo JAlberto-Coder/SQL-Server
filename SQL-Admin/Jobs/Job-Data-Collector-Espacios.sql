@@ -6,16 +6,16 @@ GO
 -- ==================================================
 -- Autor:		JAlberto-Coder
 -- Fecha:		22-07-2021
--- Descripcion:	Generación de un job para la recolección de información de las bases de datos de la instancia, recolectadas en la base master, y en la tabla sql_server_espacios
+-- Descripcion:	Generación de un job para la recolección de información de las bases de datos de la instancia, recolectadas en la base master, y en la tabla sql_server_db_espacios
 -- ==================================================
 DECLARE @jobId BINARY(16)
-EXEC  msdb.dbo.sp_add_job @job_name=N'ManagementPlan_DC_Espacios', 
+EXEC  msdb.dbo.sp_add_job @job_name=N'ManagementPlan_DC_DB_Espacios', 
 		@enabled=1, 
 		@notify_level_eventlog=0, 
 		@notify_level_email=2, 
 		@notify_level_page=2, 
 		@delete_level=0, 
-		@description=N'Job encargado de recolectar información de los espacios utilizados por cada base de datos, con el fin de poder generar una estimación de crecimiento facilmente al leer la tabla sql_server_espacios.', 
+		@description=N'Job encargado de recolectar información de los espacios utilizados por cada base de datos, con el fin de poder generar una estimación de crecimiento facilmente al leer la tabla sql_server_db_espacios.', 
 		@category_name=N'Data Collector', 
 		@owner_login_name=N'sa', @job_id = @jobId OUTPUT
 select @jobId
@@ -23,12 +23,12 @@ GO
 
 DECLARE @ServerName NVARCHAR(15);
 SELECT @ServerName = @@SERVERNAME;
-EXEC ('EXEC msdb.dbo.sp_add_jobserver @job_name=N''ManagementPlan_DC_Espacios'', @server_name = N''' + @ServerName + '''')
+EXEC ('EXEC msdb.dbo.sp_add_jobserver @job_name=N''ManagementPlan_DC_DB_Espacios'', @server_name = N''' + @ServerName + '''')
 GO
 
 USE [msdb]
 GO
-EXEC msdb.dbo.sp_add_jobstep @job_name=N'ManagementPlan_DC_Espacios', @step_name=N'ManagementPlan_DC_Espacios', 
+EXEC msdb.dbo.sp_add_jobstep @job_name=N'ManagementPlan_DC_DB_Espacios', @step_name=N'ManagementPlan_DC_DB_Espacios', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
 		@on_success_action=1, 
@@ -45,9 +45,9 @@ GO
 -- Fecha:		22-07-2021
 -- Descripcion:	Proceso que lee las bases de datos, para poder realizar un analisis de tendencia facilmente a futuro
 -- =======================================================
-IF NOT EXISTS (SELECT TOP(1) 1 FROM sys.objects WHERE object_id = OBJECT_ID(N''[dbo].[sql_server_espacios]'') AND type IN(N''U''))
+IF NOT EXISTS (SELECT TOP(1) 1 FROM sys.objects WHERE object_id = OBJECT_ID(N''[dbo].[sql_server_db_espacios]'') AND type IN(N''U''))
 BEGIN
-	CREATE TABLE dbo.sql_server_espacios 
+	CREATE TABLE dbo.sql_server_db_espacios 
 	(
 		id_espacios BIGINT NOT NULL IDENTITY(1, 1) CONSTRAINT PK_sql_server_espacios PRIMARY KEY(id_espacios),
 		fecha DATETIME NOT NULL CONSTRAINT DF_sql_server_espacios_fecha DEFAULT(GETDATE()),
@@ -59,7 +59,6 @@ BEGIN
 	);
 END
 GO
-
 CREATE TABLE #databases_size
 (
     database_id INT, 
@@ -71,7 +70,6 @@ CREATE TABLE #databases_size
 	[type] BIT
 );
 GO
-
 EXEC sys.sp_MSforeachdb 
 ''Use [?];
 	INSERT INTO #databases_size(database_id, database_name, name, physical_name, size, free_space, type)
@@ -85,14 +83,13 @@ EXEC sys.sp_MSforeachdb
 		, type
 	FROM sys.database_files;'';
 GO
-
 ;WITH CTE
 AS
 (
     SELECT [database_name] AS [database_name], size AS size, free_space AS free_space, type AS [type]
     FROM #databases_size
 )
-INSERT INTO dbo.sql_server_espacios(fecha,base_datos,tamanio_datos_mb,tamanio_log_mb,espacio_libre_datos_mb,espacio_libre_log_mb)
+INSERT INTO dbo.sql_server_db_espacios(fecha,base_datos,tamanio_datos_mb,tamanio_log_mb,espacio_libre_datos_mb,espacio_libre_log_mb)
 SELECT GETDATE() AS fecha
 	, name AS base_datos
     , CAST((SELECT SUM(size) FROM CTE WHERE type = 0 AND CTE.database_name = db.name) AS DECIMAL(18, 2)) AS tamanio_datos_mb
@@ -101,7 +98,6 @@ SELECT GETDATE() AS fecha
     , CAST((SELECT SUM(free_space) FROM CTE WHERE type = 1 AND CTE.database_name = db.name) AS DECIMAL(18, 2)) AS espacio_libre_log_mb
 FROM sys.databases db
 GO
-
 DROP TABLE #databases_size;
 GO', 
 		@database_name=N'master', 
@@ -109,14 +105,14 @@ GO',
 GO
 USE [msdb]
 GO
-EXEC msdb.dbo.sp_update_job @job_name=N'ManagementPlan_DC_Espacios', 
+EXEC msdb.dbo.sp_update_job @job_name=N'ManagementPlan_DC_DB_Espacios', 
 		@enabled=1, 
 		@start_step_id=1, 
 		@notify_level_eventlog=0, 
 		@notify_level_email=2, 
 		@notify_level_page=2, 
 		@delete_level=0, 
-		@description=N'Job encargado de recolectar información de los espacios utilizados por cada base de datos, con el fin de poder generar una estimación de crecimiento facilmente al leer la tabla sql_server_espacios.', 
+		@description=N'Job encargado de recolectar información de los espacios utilizados por cada base de datos, con el fin de poder generar una estimación de crecimiento facilmente al leer la tabla sql_server_db_espacios.', 
 		@category_name=N'Data Collector', 
 		@owner_login_name=N'sa', 
 		@notify_email_operator_name=N'', 
@@ -125,7 +121,7 @@ GO
 USE [msdb]
 GO
 DECLARE @schedule_id int
-EXEC msdb.dbo.sp_add_jobschedule @job_name=N'ManagementPlan_DC_Espacios', @name=N'ManagementPlan_DC_Espacios', 
+EXEC msdb.dbo.sp_add_jobschedule @job_name=N'ManagementPlan_DC_DB_Espacios', @name=N'ManagementPlan_DC_DB_Espacios', 
 		@enabled=1, 
 		@freq_type=32, 
 		@freq_interval=8, 
