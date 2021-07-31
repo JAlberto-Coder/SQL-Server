@@ -6,7 +6,7 @@ GO
 -- =======================================================
 -- Autor:		JAlberto-Coder
 -- Fecha:		24-03-2021
--- Descripcion: Consultas para extraer información relevante a los tamaños de las bases de datos
+-- Descripcion: Consultas para extraer informaciÃ³n relevante a los tamaÃ±os de las bases de datos
 -- =======================================================
 -- Espacio utilizado por cada base de datos, con su data y su log
 -- =======================================================
@@ -27,10 +27,8 @@ WHERE database_id > 4
 ORDER BY data_file_size_MB DESC;
 GO
 -- =======================================================
--- Consulta que trae el espacio que se esta utilizando realmente sobre el tamaño asignado a la base de datos
+-- Consulta que trae el espacio que se esta utilizando realmente sobre el tamaÃ±o asignado a la base de datos
 -- =======================================================
-DROP TABLE IF EXISTS #DataBases_Size;
-GO
 CREATE TABLE #DataBases_Size
 (
     database_id INT, 
@@ -50,8 +48,8 @@ EXEC sp_msforeachdb
 		, DB_NAME()
 		, name
 		, physical_name
-		, TRY_CONVERT(NVARCHAR, CAST(ROUND(CAST(size AS decimal) * 8.0 / 1024.0, 2) AS decimal(18,2))) AS size
-		, TRY_CONVERT(NVARCHAR, CAST(ROUND(CAST(size AS decimal) * 8.0 / 1024.0, 2) AS DECIMAL(18,2)) 
+		, CONVERT(NVARCHAR, CAST(ROUND(CAST(size AS decimal) * 8.0 / 1024.0, 2) AS decimal(18,2))) AS size
+		, CONVERT(NVARCHAR, CAST(ROUND(CAST(size AS decimal) * 8.0 / 1024.0, 2) AS DECIMAL(18,2)) 
 			- CAST(FILEPROPERTY(name, ''SpaceUsed'') * 8.0 / 1024.0 AS DECIMAL(18,2))) AS free_space
 		, type
     FROM sys.database_files;
@@ -66,7 +64,7 @@ GROUP BY database_name
 ORDER BY size_gb DESC;
 GO
 
-DROP TABLE IF EXISTS #DataBases_Size;
+DROP TABLE #DataBases_Size;
 GO
 -- =======================================================
 -- Espacio Utilizado por cada FileGroup
