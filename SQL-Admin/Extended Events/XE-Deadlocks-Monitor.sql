@@ -7,7 +7,7 @@
 -- Descripcion:	Evento extendido para detectar sesiones que llega a tener un DEADLOCK
 -- 
 -- =======================================================
--- CREACIÓN DE LA SESIÓN DEADLOCKS_MONITOR, Tomando esta creación de la página: https://datoptim.com/monitor-deadlock/
+-- CREACIÃ“N DE LA SESIÃ“N DEADLOCKS_MONITOR, Tomando esta creaciÃ³n de la pÃ¡gina: https://datoptim.com/monitor-deadlock/
 -- =======================================================
 CREATE EVENT SESSION Deadlocks_Monitor ON SERVER 
 ADD EVENT sqlserver.lock_deadlock
@@ -35,7 +35,7 @@ WITH
 )
 GO
 -- =======================================================
--- SE INICIALIZA LA SESIÓN DEL EVENTO
+-- SE INICIALIZA LA SESIÃ“N DEL EVENTO
 -- =======================================================
 ALTER EVENT SESSION Deadlocks_Monitor ON SERVER 
 	STATE = START;
@@ -52,14 +52,30 @@ FROM sys.fn_xe_file_target_read_file
     'C:\MSSQL\Extended Events\Deadlocks_Monitor*.xel', NULL, NULL, NULL
 );
 GO
+
+SELECT EventDateTime_UTC = SessionEvents.SessionEventData_XML.value(N'(@timestamp)[1]', N'DATETIME2(7)')
+	, EventName = SessionEvents.SessionEventData_XML.value(N'(@name)[1]', 'VARCHAR(50)')
+	, EventXML = SessionEventData.EventData_XML
+FROM
+(
+    SELECT CAST(event_data AS XML) AS EventData_XML
+    FROM sys.fn_xe_file_target_read_file
+	(
+		N'C:\MSSQL\Extended Events\Deadlocks_Monitor*.xel', NULL, NULL, NULL
+	)
+)
+AS SessionEventData
+CROSS APPLY SessionEventData.EventData_XML.nodes(N'//event') AS SessionEvents (SessionEventData_XML)
+ORDER BY EventDateTime_UTC, EventName;
+GO
 -- =======================================================
--- SE FINALIZA LA SESIÓN
+-- SE FINALIZA LA SESIÃ“N
 -- =======================================================
 ALTER EVENT SESSION Deadlocks_Monitor ON SERVER
 	STATE = STOP;
 GO
 -- =======================================================
--- OPCIONALMENTE SE ELIMINA LA SESIÓN
+-- OPCIONALMENTE SE ELIMINA LA SESIÃ“N
 -- =======================================================
 DROP EVENT SESSION Deadlocks_Monitor ON SERVER;
 GO
