@@ -55,13 +55,19 @@ GO
 
 SELECT EventDateTime_UTC = SessionEvents.SessionEventData_XML.value(N'(@timestamp)[1]', N'DATETIME2(7)')
 	, EventName = SessionEvents.SessionEventData_XML.value(N'(@name)[1]', 'VARCHAR(50)')
+	, SQLTextProcessVictim = REPLACE(SessionEvents.SessionEventData_XML.value(N'(/event/data/value/deadlock/process-list/process/executionStack/frame)[1]', 'VARCHAR(MAX)'), '  ', ' ')
+	, SQLTextProcess2 = REPLACE(SessionEvents.SessionEventData_XML.value(N'(/event/data/value/deadlock/process-list/process/executionStack/frame)[2]', 'VARCHAR(MAX)'), '  ', ' ')
+	, SQLTextProcess3 = REPLACE(SessionEvents.SessionEventData_XML.value(N'(/event/data/value/deadlock/process-list/process/executionStack/frame)[2]', 'VARCHAR(MAX)'), '  ', ' ')
+	, SQLTextResource1 = REPLACE(SessionEvents.SessionEventData_XML.value(N'(/event/data/value/deadlock/resource-list/keylock/@objectname)[1]', 'VARCHAR(MAX)'), '  ', ' ')
+	, SQLTextResource2 = REPLACE(SessionEvents.SessionEventData_XML.value(N'(/event/data/value/deadlock/resource-list/keylock/@objectname)[2]', 'VARCHAR(MAX)'), '  ', ' ')
+	, SQLTextResource3 = REPLACE(SessionEvents.SessionEventData_XML.value(N'(/event/data/value/deadlock/resource-list/keylock/@objectname)[3]', 'VARCHAR(MAX)'), '  ', ' ')
 	, EventXML = SessionEventData.EventData_XML
-FROM
+FROM 
 (
     SELECT CAST(event_data AS XML) AS EventData_XML
     FROM sys.fn_xe_file_target_read_file
 	(
-		N'C:\MSSQL\Extended Events\Deadlocks_Monitor*.xel', NULL, NULL, NULL
+		N'D:\Program Files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\Log\DeadlockReg*.xel', NULL, NULL, NULL
 	)
 )
 AS SessionEventData
