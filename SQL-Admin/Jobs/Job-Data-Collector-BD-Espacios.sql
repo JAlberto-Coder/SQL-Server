@@ -45,17 +45,18 @@ GO
 -- Fecha:		22-07-2021
 -- Descripcion:	Proceso que lee las bases de datos, para poder realizar un analisis de tendencia facilmente a futuro
 -- =======================================================
-IF NOT EXISTS (SELECT TOP(1) 1 FROM sys.objects WHERE object_id = OBJECT_ID(N''[dbo].[sql_server_db_espacios]'') AND type IN(N''U''))
+IF NOT EXISTS (SELECT TOP(1) 1 FROM sys.objects WHERE object_id = OBJECT_ID(N''[dbo].[dc_db_espacios]'') AND type IN(N''U''))
 BEGIN
-	CREATE TABLE dbo.sql_server_db_espacios 
+	CREATE TABLE dbo.dc_db_espacios 
 	(
-		id_espacios BIGINT NOT NULL IDENTITY(1, 1) CONSTRAINT PK_sql_server_espacios PRIMARY KEY(id_espacios),
-		fecha DATETIME NOT NULL CONSTRAINT DF_sql_server_espacios_fecha DEFAULT(GETDATE()),
+		id_espacio BIGINT NOT NULL IDENTITY(1, 1) CONSTRAINT PK_dc_db_espacios PRIMARY KEY,
+		fecha DATETIME NOT NULL CONSTRAINT DF_dc_db_espacios_fecha DEFAULT(GETDATE()),
+		id_base_datos INT NOT NULL,
 		base_datos VARCHAR(256) NOT NULL,
-		tamanio_datos_mb DECIMAL(18, 2) NOT NULL,
-		tamanio_log_mb DECIMAL(18, 2) NOT NULL,
-		espacio_libre_datos_mb DECIMAL(18, 2) NOT NULL,
-		espacio_libre_log_mb DECIMAL(18, 2) NOT NULL
+		tamanio_datos_mb DECIMAL(18, 2),
+		tamanio_log_mb DECIMAL(18, 2),
+		espacio_libre_datos_mb DECIMAL(18, 2),
+		espacio_libre_log_mb DECIMAL(18, 2)
 	);
 END
 GO
@@ -89,8 +90,9 @@ AS
     SELECT [database_name] AS [database_name], size AS size, free_space AS free_space, type AS [type]
     FROM #databases_size
 )
-INSERT INTO dbo.sql_server_db_espacios(fecha,base_datos,tamanio_datos_mb,tamanio_log_mb,espacio_libre_datos_mb,espacio_libre_log_mb)
+INSERT INTO dbo.dc_db_espacios(fecha,id_base_datos,base_datos,tamanio_datos_mb,tamanio_log_mb,espacio_libre_datos_mb,espacio_libre_log_mb)
 SELECT GETDATE() AS fecha
+	, database_id AS id_base_datos
 	, name AS base_datos
     , CAST((SELECT SUM(size) FROM CTE WHERE type = 0 AND CTE.database_name = db.name) AS DECIMAL(18, 2)) AS tamanio_datos_mb
     , CAST((SELECT SUM(size) FROM CTE WHERE type = 1 AND CTE.database_name = db.name) AS DECIMAL(18, 2)) AS tamanio_log_mb
