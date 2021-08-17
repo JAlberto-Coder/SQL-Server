@@ -67,7 +67,7 @@ FROM
     SELECT CAST(event_data AS XML) AS EventData_XML
     FROM sys.fn_xe_file_target_read_file
 	(
-		N'D:\Program Files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\Log\DeadlockReg*.xel', NULL, NULL, NULL
+		N'C:\MSSQL\Extended Events\Deadlocks_Monitor*.xel', NULL, NULL, NULL
 	)
 )
 AS SessionEventData
