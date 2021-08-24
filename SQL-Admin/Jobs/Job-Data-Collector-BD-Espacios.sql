@@ -21,7 +21,7 @@ EXEC  msdb.dbo.sp_add_job @job_name=N'ManagementPlan_DC_DB_Espacios',
 select @jobId
 GO
 
-DECLARE @ServerName NVARCHAR(15);
+DECLARE @ServerName NVARCHAR(50);
 SELECT @ServerName = @@SERVERNAME;
 EXEC ('EXEC msdb.dbo.sp_add_jobserver @job_name=N''ManagementPlan_DC_DB_Espacios'', @server_name = N''' + @ServerName + '''')
 GO
