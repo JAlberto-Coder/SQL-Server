@@ -6,9 +6,10 @@ GO
 -- ==================================================
 -- Autor:		JAlberto-Coder
 -- Fecha:		24-08-2021
--- Descripcion:	Consultas para traer información de las bases de datos, para un inventario
+-- Descripcion:	Consultas para traer informaciÃ³n de las bases de datos, para un inventario
 -- ==================================================
-SELECT @@SERVERNAME AS instance
+SELECT SERVERPROPERTY('MachineName') AS hostname
+	, @@SERVERNAME AS instance
 	, LEFT(@@VERSION, 25) AS version
 	, db.database_id
 	, db.name
