@@ -22,7 +22,7 @@ EXEC  msdb.dbo.sp_add_job @job_name=N'MaintenancePlan_BackupFULL',
 		@owner_login_name=N'sa', @job_id = @jobId OUTPUT
 select @jobId
 GO
-DECLARE @ServerName NVARCHAR(15);
+DECLARE @ServerName NVARCHAR(50);
 SELECT @ServerName = @@SERVERNAME;
 EXEC ('EXEC msdb.dbo.sp_add_jobserver @job_name=N''MaintenancePlan_BackupFULL'', @server_name = N''' + @ServerName + '''')
 GO
@@ -38,7 +38,7 @@ EXEC msdb.dbo.sp_add_jobstep @job_name=N'MaintenancePlan_BackupFULL', @step_name
 		@os_run_priority=0, @subsystem=N'TSQL', 
 		@command=N'EXECUTE dbo.DatabaseBackup
 	@Databases = ''USER_DATABASES'',
-	@Directory = ''C:\SQL\Backup\1-LUNES'',
+	@Directory = ''C:\MSSQL\Backup\1-LUNES'',
 	@BackupType = ''FULL'',
 	@Verify = ''Y'',
 	@Compress = ''Y'',

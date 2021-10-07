@@ -22,7 +22,7 @@ EXEC  msdb.dbo.sp_add_job @job_name=N'MaintenancePlan_BackupLOG',
 		@owner_login_name=N'sa', @job_id = @jobId OUTPUT
 select @jobId
 GO
-DECLARE @ServerName NVARCHAR(15);
+DECLARE @ServerName NVARCHAR(50);
 SELECT @ServerName = @@SERVERNAME;
 EXEC ('EXEC msdb.dbo.sp_add_jobserver @job_name=N''MaintenancePlan_BackupLOG'', @server_name = N''' + @ServerName + '''')
 GO
@@ -41,7 +41,7 @@ SET DATEFORMAT DMY;
 
 DECLARE @DIA NVARCHAR(50);
 
-SELECT @DIA = N''C:\SQL\Backup\'' 
+SELECT @DIA = N''C:\MSSQL\Backup\'' 
 	+ CASE DATEPART(DW, GETDATE()) 
 		WHEN 1 THEN ''1-LUNES''
 		WHEN 2 THEN ''2-MARTES''
